@@ -200,48 +200,76 @@
         });
 
       /* ── Form submit ── */
-      function submitForm(e) {
+      const FORM_ENDPOINT = "https://formsubmit.co/ajax/ishingapro@aol.com";
+
+      function setBtnState(b, html, bg, glow) {
+        b.innerHTML = html;
+        b.style.background = bg;
+        b.style.boxShadow = glow;
+      }
+
+      function resetBtn(b) {
+        setBtnState(
+          b,
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg> SEND MESSAGE',
+          "",
+          "",
+        );
+      }
+
+      async function submitForm(e) {
         e.preventDefault();
         const form = document.getElementById("contactForm");
         if (form && !form.reportValidity()) return;
 
-        const nameEl = document.getElementById("cf-name");
-        const phoneEl = document.getElementById("cf-phone");
-        const emailEl = document.getElementById("cf-email");
-        const msgEl = document.getElementById("cf-message");
-
-        const stripCRLF = (str) => str.replace(/[\r\n]+/g, " ").trim();
-
-        const name = stripCRLF(nameEl.value);
-        const phone = stripCRLF(phoneEl.value);
-        const email = stripCRLF(emailEl.value);
-        const message = msgEl.value.trim();
-
-        const subject = `New Enquiry from ${name || "Website Visitor"}`;
-        const body = [
-          `Name: ${name}`,
-          `Phone: ${phone || "N/A"}`,
-          `Email: ${email}`,
-          "",
-          "Message:",
-          message,
-        ].join("\n");
-
-        const mailto = `mailto:ishingapro@aol.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
         const b = document.getElementById("sendBtn");
-        b.innerHTML = "✓ OPENING EMAIL APP...";
-        b.style.background = "#16a34a";
-        b.style.boxShadow = "0 0 32px rgba(22,163,74,.7)";
+        const status = document.getElementById("cf-status");
+        const emailEl = document.getElementById("cf-email");
 
-        window.location.href = mailto;
+        setBtnState(b, "SENDING…", "", "");
+        b.disabled = true;
+        if (status) status.textContent = "";
 
-        setTimeout(() => {
-          b.innerHTML =
-            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg> SEND MESSAGE';
-          b.style.background = "";
-          b.style.boxShadow = "";
-          if (form) form.reset();
-        }, 3200);
+        try {
+          const res = await fetch(FORM_ENDPOINT, {
+            method: "POST",
+            headers: { Accept: "application/json" },
+            body: new FormData(form),
+          });
+
+          if (!res.ok) throw new Error("Request failed");
+
+          setBtnState(b, "✓ MESSAGE SENT!", "#16a34a", "0 0 32px rgba(22,163,74,.7)");
+          if (status)
+            status.textContent =
+              "Thank you! Your message has been sent. We'll get back to you soon.";
+          form.reset();
+        } catch (err) {
+          // Fallback: open the visitor's email client with a pre-filled message
+          const name = (document.getElementById("cf-name")?.value || "").replace(/[\r\n]+/g, " ").trim();
+          const phone = (document.getElementById("cf-phone")?.value || "").replace(/[\r\n]+/g, " ").trim();
+          const email = (emailEl?.value || "").replace(/[\r\n]+/g, " ").trim();
+          const message = (document.getElementById("cf-message")?.value || "").trim();
+          const subject = `New Enquiry from ${name || "Website Visitor"}`;
+          const body = [
+            `Name: ${name}`,
+            `Phone: ${phone || "N/A"}`,
+            `Email: ${email}`,
+            "",
+            "Message:",
+            message,
+          ].join("\n");
+          window.location.href = `mailto:ishingapro@aol.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+          setBtnState(b, "⚠ OPENING EMAIL APP…", "", "");
+          if (status)
+            status.textContent =
+              "We couldn't send automatically, so we've opened your email app instead.";
+        } finally {
+          setTimeout(() => {
+            resetBtn(b);
+            b.disabled = false;
+          }, 3200);
+        }
       }
       window.submitForm = submitForm;

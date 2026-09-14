@@ -627,24 +627,29 @@
             <h3>Send us a message</h3>
             <p>We'll get the message directly on our devices.</p>
             <form id="contactForm" onsubmit="submitForm(event)" novalidate>
+              <input type="text" name="_honey" style="display: none" tabindex="-1" autocomplete="off" />
+              <input type="hidden" name="_subject" value="New Enquiry - Ishinga Productions Website" />
+              <input type="hidden" name="_captcha" value="false" />
+              <input type="hidden" name="_template" value="table" />
               <div class="frow">
                 <div class="fg">
                   <label>NAME</label
-                  ><input type="text" id="cf-name" placeholder="Your Name" required />
+                  ><input type="text" id="cf-name" name="name" placeholder="Your Name" required />
                 </div>
                 <div class="fg">
                   <label>PHONE</label
-                  ><input type="tel" id="cf-phone" placeholder="Your Number" />
+                  ><input type="tel" id="cf-phone" name="phone" placeholder="Your Number" />
                 </div>
               </div>
               <div class="fg">
                 <label>EMAIL</label
-                ><input type="email" id="cf-email" placeholder="your@email.com" required />
+                ><input type="email" id="cf-email" name="email" placeholder="your@email.com" required />
               </div>
               <div class="fg">
                 <label>MESSAGE</label
                 ><textarea
                   id="cf-message"
+                  name="message"
                   rows="5"
                   placeholder="How can we help with your event?"
                   required
@@ -663,6 +668,7 @@
                 </svg>
                 SEND MESSAGE
               </button>
+              <p id="cf-status" class="cf-status" role="status" aria-live="polite"></p>
             </form>
             <div class="or-sep">OR CONNECT DIRECTLY</div>
             <a href="https://wa.me/message/44EUDGU3LRJSJ1" target="_blank" rel="noopener noreferrer" class="btn-wa">

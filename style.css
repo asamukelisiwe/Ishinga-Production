@@ -1594,6 +1594,19 @@
        0 0 65px rgba(59, 130, 246, 0.35);
    }
 
+   .btn-sub:disabled {
+     cursor: default;
+     opacity: 0.85;
+   }
+
+   .cf-status {
+     margin-top: 12px;
+     font-size: 13px;
+     line-height: 1.5;
+     color: var(--txt);
+     min-height: 1em;
+   }
+
    .btn-wa {
      width: 100%;
      padding: 15px;
