@@ -224,7 +224,6 @@
 
         const b = document.getElementById("sendBtn");
         const status = document.getElementById("cf-status");
-        const emailEl = document.getElementById("cf-email");
 
         setBtnState(b, "SENDING…", "", "");
         b.disabled = true;
@@ -245,26 +244,10 @@
               "Thank you! Your message has been sent. We'll get back to you soon.";
           form.reset();
         } catch (err) {
-          // Fallback: open the visitor's email client with a pre-filled message
-          const name = (document.getElementById("cf-name")?.value || "").replace(/[\r\n]+/g, " ").trim();
-          const phone = (document.getElementById("cf-phone")?.value || "").replace(/[\r\n]+/g, " ").trim();
-          const email = (emailEl?.value || "").replace(/[\r\n]+/g, " ").trim();
-          const message = (document.getElementById("cf-message")?.value || "").trim();
-          const subject = `New Enquiry from ${name || "Website Visitor"}`;
-          const body = [
-            `Name: ${name}`,
-            `Phone: ${phone || "N/A"}`,
-            `Email: ${email}`,
-            "",
-            "Message:",
-            message,
-          ].join("\n");
-          window.location.href = `mailto:ishingapro@aol.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-          setBtnState(b, "⚠ OPENING EMAIL APP…", "", "");
+          setBtnState(b, "✕ SEND FAILED", "#dc2626", "0 0 32px rgba(220,38,38,.7)");
           if (status)
             status.textContent =
-              "We couldn't send automatically, so we've opened your email app instead.";
+              "Sorry, something went wrong sending your message. Please try again or contact us directly.";
         } finally {
           setTimeout(() => {
             resetBtn(b);
