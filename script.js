@@ -202,15 +202,46 @@
       /* ── Form submit ── */
       function submitForm(e) {
         e.preventDefault();
+        const form = document.getElementById("contactForm");
+        if (form && !form.reportValidity()) return;
+
+        const nameEl = document.getElementById("cf-name");
+        const phoneEl = document.getElementById("cf-phone");
+        const emailEl = document.getElementById("cf-email");
+        const msgEl = document.getElementById("cf-message");
+
+        const stripCRLF = (str) => str.replace(/[\r\n]+/g, " ").trim();
+
+        const name = stripCRLF(nameEl.value);
+        const phone = stripCRLF(phoneEl.value);
+        const email = stripCRLF(emailEl.value);
+        const message = msgEl.value.trim();
+
+        const subject = `New Enquiry from ${name || "Website Visitor"}`;
+        const body = [
+          `Name: ${name}`,
+          `Phone: ${phone || "N/A"}`,
+          `Email: ${email}`,
+          "",
+          "Message:",
+          message,
+        ].join("\n");
+
+        const mailto = `mailto:ishingapro@aol.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
         const b = document.getElementById("sendBtn");
-        b.innerHTML = "✓ MESSAGE SENT!";
+        b.innerHTML = "✓ OPENING EMAIL APP...";
         b.style.background = "#16a34a";
         b.style.boxShadow = "0 0 32px rgba(22,163,74,.7)";
+
+        window.location.href = mailto;
+
         setTimeout(() => {
           b.innerHTML =
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg> SEND MESSAGE';
           b.style.background = "";
           b.style.boxShadow = "";
+          if (form) form.reset();
         }, 3200);
       }
       window.submitForm = submitForm;
